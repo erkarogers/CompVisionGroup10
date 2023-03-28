@@ -48,7 +48,6 @@ def average_imag(img):
   aSize = size
 
   # calculate size of array
-  aSize = 128
   z = 0
   while aSize >= 16:
     for i in range(int(size/aSize)):
