@@ -1,4 +1,4 @@
-#Grabcut algorithm 
+#Grabcut algorithm taken from https://docs.opencv.org/3.4/d8/d83/tutorial_py_grabcut.html
 #NOTE: Fill 'INSERT PATH HERE' with image path before running
 
 import numpy
