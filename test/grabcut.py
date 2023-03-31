@@ -6,7 +6,7 @@ import cv2
 from matplotlib import pyplot as plt
 
 #reads image
-cutImage = cv3.imread(INSERT PATH HERE)
+cutImage = cv2.imread(INSERT PATH HERE)
 
 #creates mask
 mask = numpy.zeros(cutImage.shape[:2], numpy.uint8)
@@ -19,7 +19,7 @@ foreground = numpy.zeros((1,65), numpy.float64))
 ROI = (0,0,128,128)
 
 #grabcut
-cvs.grabCut(cutImage, mask, ROI, background, foreground, 3, cv2.GC_INIT_WITH_RECT)
+cv2.grabCut(cutImage, mask, ROI, background, foreground, 3, cv2.GC_INIT_WITH_RECT)
 
 #new mask
 newMask = numpy.where((mask == 2)|(mask == 0), 0, 1).astype('uint8')
