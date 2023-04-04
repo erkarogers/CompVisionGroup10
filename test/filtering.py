@@ -10,8 +10,8 @@ Generates a filtered image after normalizing the contrast, bluring, then edge de
 '''
 def applyFilters(img):
     scale = 4
-    blur_size = 51
-    size = 5
+    blur_size = 21
+    size = 3
     
     # Apply Linear Stretching
     image_yuv = cv2.cvtColor(img, cv2.COLOR_RGB2YCrCb)
@@ -40,14 +40,16 @@ def applyFilters(img):
 # If run then it will use a test image and display the results at each stage of the pipeline
 def main():
     # Parameters
-    scale = 4
+    # scale = 4
     blur_size = 51
-    size = 5
+    size = 3
 
     # Read in image
     jsImag = cv2.imread("./test/imag/tigerWoods.jpg")
-    (h, w) = jsImag.shape[:2]
-    jsImag_res = cv2.resize(jsImag, (int(h/scale), int(w/scale)))
+    (w, h) = jsImag.shape[:2]
+    scale = 512 / w
+    dim = (int(w * scale), int(h * scale))
+    jsImag_res = cv2.resize(jsImag, dim)
     cv2.imshow(('Original'),jsImag_res)
     
     

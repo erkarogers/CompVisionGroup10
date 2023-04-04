@@ -15,8 +15,9 @@ Merges two images and outputs them in the given size.
 @return the merged (size x size) image (mat)
 '''
 def merge_imag(img1, img2, size):
-  img1 = cv2.resize(img1, (size,size))
-  img2 = cv2.resize(img2, (size,size))
+  dim = (int(size),int(size))
+  img1 = cv2.resize(img1, dim, interpolation = cv2.INTER_AREA)
+  img2 = cv2.resize(img2, (int(size),int(size)))
   return cv2.add(img1, img2)
 
 '''
@@ -30,11 +31,11 @@ Averages pixel using algorithm based in A Revised Averaging Algorithm for an Eff
 @returns Averaged pixel based upon afformentioned algorithm
 '''
 def average_pixel(img, x, y, n):
-  sum = [0, 0, 0]
+  sum = 0
   for i in range(n):
     for j in range(n):
-      sum += ((((n-i) * (n-j)) / (n*n)) * img[x+i, y+j])
-  return (sum / (n*n))
+      sum += (((n-i) * (n-j)) / (n*n)) * img[x+i, y+j]
+  return sum / (n*n)
 
 '''
 Average image for compression using algorithm based in A Revised Averaging Algorithm for an Effective Feature Extraction in Component- based Image Retrieval System
@@ -56,12 +57,13 @@ def average_imag(img):
     aSize = aSize / 2
   
   # allocate array w/ zeros to increase speed
-  a = np.zeros((z, 3))
+  a = np.zeros(z)
   n = size
   z = 0;
   while n >= 16 :
     for i in range(int(size/n)):
       for j in range(int(size/n)):
+        # print(average_pixel(img, i, j, int(n)))
         a[z] = average_pixel(img, i, j, int(n))
         z += 1
     n = n / 2
