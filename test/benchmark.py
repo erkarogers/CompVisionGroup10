@@ -1,20 +1,28 @@
 import sys
 import pickle
 import cv2
-import fullAlg
 import time
 import cProfile
 import re
 import pstats
 from pstats import SortKey
+import imagehash
+from PIL import Image
+
+import fullAlg
 
 
 def main():
-    num_batch_files = 1
+    num_batch_files = 148
     num_images = 0
     images = {}
     image_index = 0
     image_hashes_paper = {}
+    image_hashes_improved = {}
+    image_hashes_average = {}
+    image_hashes_phash = {}
+    image_hashes_wavelet = {}
+    image_hashes_diff = {}
     time0 = time.time()
     for image_batch in range(num_batch_files):
         print('../Dataset/image_batch_' + str(image_batch) + '.pkl')
@@ -23,11 +31,29 @@ def main():
         num_images += len(images)
         for image_id in images:
             # print(images[image_id].shape)
+            image = Image.fromarray(images[image_id])
             image_hashes_paper[image_id] = fullAlg.applyAlg(images[image_id])
+            image_hashes_improved[image_id] = fullAlg.applyAlgImproved(images[image_id])
+            image_hashes_average[image_id] = imagehash.average_hash(image)
+            image_hashes_phash[image_id] = imagehash.phash(image)
+            image_hashes_wavelet[image_id] = imagehash.whash(image)
+            image_hashes_diff[image_id] = imagehash.dhash(image)
+            
             print("Image " + str(image_index) + "/" + str(num_images))
             image_index += 1
-            # if image_index > 20:
-            #     break
+            if image_index % 1000 == 0:
+                hashes = (image_hashes_paper, image_hashes_improved, image_hashes_average, image_hashes_phash, image_hashes_wavelet, image_hashes_diff)
+                with open('../Dataset/image_hashes' + str(int(image_index/1000)) + '.pkl' , 'wb') as f:
+                    pickle.dump(hashes, f)
+                image_hashes_paper = {}
+                image_hashes_improved = {}
+                image_hashes_average = {}
+                image_hashes_phash = {}
+                image_hashes_wavelet = {}
+                image_hashes_diff = {}
+    hashes = (image_hashes_paper, image_hashes_improved, image_hashes_average, image_hashes_phash, image_hashes_wavelet, image_hashes_diff)
+    with open('../Dataset/image_hashes' + str(int(image_index/1000)) + '.pkl' , 'wb') as f:
+        pickle.dump(hashes, f)
     time1 = time.time()
     dtime = time1 - time0
     print("Total time: " + str(dtime) + "Time/image: " + str(dtime/num_images))

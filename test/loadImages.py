@@ -70,5 +70,4 @@ for index, image in datasets['photos'].iterrows():
       image_batch = {}
       batch_size = 0
       image_batch_index += 1
-      break
 

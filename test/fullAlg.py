@@ -16,13 +16,68 @@ def applyAlg(img):
 
     
     filtered_img = filtering.applyFilters(img)
-    print("filtered_img: " + str(filtered_img.shape))
+    # print("filtered_img: " + str(filtered_img.shape))
     # cv2.imshow(('filtered_img'),filtered_img)
 
     
     grabcut_img = grabcut.grabcut(img)
     # grabcut_img = backCut.cut(img)
-    print("grabcut_img: " + str(grabcut_img.shape))
+    # print("grabcut_img: " + str(grabcut_img.shape))
+    # cv2.imshow(('grabcut_img'),grabcut_img)
+    cv2.waitKey(0)
+    
+    grey_grabcut = rgb2gray(grabcut_img)
+    
+    labeled_grabcut = label(grey_grabcut > 0)
+    
+    # image_label_overlay = label2rgb(labeled_grabcut, image=grabcut_img, bg_label=0)
+
+    # fig, ax = plt.subplots(figsize=(10, 6))
+    # ax.imshow(image_label_overlay)
+    # ax.set_axis_off()
+    # plt.tight_layout()
+    # plt.show()
+    
+    cut_props = regionprops(labeled_grabcut, grabcut_img)
+    # print("props: " + str(cut_props))
+
+    
+    largest_area = 0
+    largest_bbox = None
+    for prop in cut_props:
+        if prop.area > largest_area:
+            largest_area = prop.area
+            largest_bbox = prop.bbox
+            
+    # print(largest_area, " : ", largest_bbox)
+    if largest_bbox is None:
+        cropped_filtered_img = filtered_img
+        cropped_grabcut_img = grabcut_img
+    else:
+        cropped_filtered_img = filtered_img[largest_bbox[0]:largest_bbox[2], largest_bbox[1]:largest_bbox[3]]
+        cropped_grabcut_img = grabcut_img[largest_bbox[0]:largest_bbox[2], largest_bbox[1]:largest_bbox[3]]
+    
+    merged_img = mergeAverage.merge_imag(cropped_filtered_img, cropped_grabcut_img, 128)
+    
+    greyscale_merged_img = img_as_ubyte(rgb2gray(merged_img))
+    
+    hashed_img = mergeAverage.average_imag(greyscale_merged_img)
+    # print("Hashed Image: ")
+    # print(hashed_img)
+    return hashed_img
+
+def applyAlgImproved(img):
+    # cv2.imshow(('img'),img)
+
+    
+    filtered_img = filtering.applyFilters(img)
+    # print("filtered_img: " + str(filtered_img.shape))
+    # cv2.imshow(('filtered_img'),filtered_img)
+
+    
+    # grabcut_img = grabcut.grabcut(img)
+    grabcut_img = backCut.cut(img)
+    # print("grabcut_img: " + str(grabcut_img.shape))
     # cv2.imshow(('grabcut_img'),grabcut_img)
     cv2.waitKey(0)
     
