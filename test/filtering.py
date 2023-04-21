@@ -61,11 +61,14 @@ def main():
     
     stretched_res = cv2.resize(stretched, (int(h/scale), int(w/scale)))
     cv2.imshow(('Stretched'),stretched_res)
+    cv2.imwrite("./test/imag/tigerWoods_stretched.jpg", stretched_res)
     
     # Apply Gausian Filter
     lowPass = cv2.GaussianBlur(stretched, (blur_size, blur_size),0)
     lowPass_res = cv2.resize(lowPass, (int(h/scale), int(w/scale)))
     cv2.imshow(('Gaussian'),lowPass_res)
+    cv2.imwrite("./test/imag/tigerWoods_blured.jpg", lowPass_res)
+
     
     # Apply Sobel Filter
     b, g, r = cv2.split(lowPass)
@@ -81,6 +84,7 @@ def main():
     sobel = cv2.merge((b,g,r))
     sobel_res = cv2.resize(sobel, (int(h/scale), int(w/scale)))
     cv2.imshow(('Sobel'),sobel_res)
+    cv2.imwrite("./test/imag/tigerWoods_sobel.jpg", sobel_res)
     
     cv2.waitKey(0)
 

@@ -16,6 +16,8 @@ def applyAlg(img):
 
     
     filtered_img = filtering.applyFilters(img)
+    # cv2.imwrite("./test/imag/tigerWoods_filtered.jpg", filtered_img)
+
     # print("filtered_img: " + str(filtered_img.shape))
     # cv2.imshow(('filtered_img'),filtered_img)
 
@@ -24,7 +26,7 @@ def applyAlg(img):
     # grabcut_img = backCut.cut(img)
     # print("grabcut_img: " + str(grabcut_img.shape))
     # cv2.imshow(('grabcut_img'),grabcut_img)
-    cv2.waitKey(0)
+    # cv2.waitKey(0)
     
     grey_grabcut = rgb2gray(grabcut_img)
     
@@ -56,21 +58,27 @@ def applyAlg(img):
     else:
         cropped_filtered_img = filtered_img[largest_bbox[0]:largest_bbox[2], largest_bbox[1]:largest_bbox[3]]
         cropped_grabcut_img = grabcut_img[largest_bbox[0]:largest_bbox[2], largest_bbox[1]:largest_bbox[3]]
+    # cv2.imwrite("./test/imag/tigerWoods_grabcut.jpg", grabcut_img)
+
     
     merged_img = mergeAverage.merge_imag(cropped_filtered_img, cropped_grabcut_img, 128)
     
     greyscale_merged_img = img_as_ubyte(rgb2gray(merged_img))
+    # cv2.imwrite("./test/imag/tigerWoods_merged.jpg", greyscale_merged_img)
     
     hashed_img = mergeAverage.average_imag(greyscale_merged_img)
     # print("Hashed Image: ")
     # print(hashed_img)
-    return hashed_img
+    return hashed_img, largest_bbox is None
 
 def applyAlgImproved(img):
     # cv2.imshow(('img'),img)
 
     
     filtered_img = filtering.applyFilters(img)
+    cv2.imwrite("./test/imag/tigerWoods_filtered.jpg", filtered_img)
+
+    
     # print("filtered_img: " + str(filtered_img.shape))
     # cv2.imshow(('filtered_img'),filtered_img)
 
@@ -81,6 +89,7 @@ def applyAlgImproved(img):
     # cv2.imshow(('grabcut_img'),grabcut_img)
     cv2.waitKey(0)
     
+    
     grey_grabcut = rgb2gray(grabcut_img)
     
     labeled_grabcut = label(grey_grabcut > 0)
@@ -112,9 +121,13 @@ def applyAlgImproved(img):
         cropped_filtered_img = filtered_img[largest_bbox[0]:largest_bbox[2], largest_bbox[1]:largest_bbox[3]]
         cropped_grabcut_img = grabcut_img[largest_bbox[0]:largest_bbox[2], largest_bbox[1]:largest_bbox[3]]
     
+    
+    cv2.imwrite("./test/imag/tigerWoods_grabcut.jpg", grabcut_img)
+    
     merged_img = mergeAverage.merge_imag(cropped_filtered_img, cropped_grabcut_img, 128)
     
     greyscale_merged_img = img_as_ubyte(rgb2gray(merged_img))
+    cv2.imwrite("./test/imag/tigerWoods_merged.jpg", greyscale_merged_img)
     
     hashed_img = mergeAverage.average_imag(greyscale_merged_img)
     # print("Hashed Image: ")
