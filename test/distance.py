@@ -1,15 +1,10 @@
-import sys
 import pickle
 import cv2
 import time
 import cProfile
-import re
 import pstats
 from pstats import SortKey
 import imagehash
-from PIL import Image
-import bitarray
-from sklearn.neighbors import BallTree
 import numpy as np
 import binascii
 from annoy import AnnoyIndex
@@ -42,6 +37,8 @@ def getCollage(images):
     col2 = np.vstack([images[6], images[7], images[8]])
     return np.hstack([col0, col1, col2])
 
+
+# a lot of this was based of of the blog post https://lvngd.com/blog/image-similarity-nearest-neighbors/ 
 
 def main():
     num_batch_files = 5
@@ -89,12 +86,13 @@ def main():
     paper_length = 0
     for id in image_hashes_paper:
         int_id = hash(id) % 100000
-        binary = str(binascii.b2a_hex(image_hashes_paper[id].round().astype(np.uint8).tobytes()))[2:-1]
-        hashed = imagehash.hex_to_flathash(binary, 170)
-        paper_hashes_image_hash[int_id] = hashed.hash.astype('int').flatten()
+        # binary = str(binascii.b2a_hex(image_hashes_paper[id].round().astype(np.uint8).tobytes()))[2:-1]
+        # hashed = imagehash.hex_to_flathash(binary, 170)
+        # paper_hashes_image_hash[int_id] = hashed.hash.astype('int').flatten()
+        paper_hashes_image_hash[int_id] = image_hashes_paper[id]
         paper_length = paper_hashes_image_hash[int_id].shape[0]
         
-    paper_annoy = AnnoyIndex(paper_length, "hamming")
+    paper_annoy = AnnoyIndex(paper_length, "euclidean")
     for key, value in paper_hashes_image_hash.items():
         paper_annoy.add_item(key, value)
     
@@ -120,12 +118,13 @@ def main():
     paper_improved_length = 0
     for id in image_hashes_improved:
         int_id = hash(id) % 100000
-        binary = str(binascii.b2a_hex(image_hashes_improved[id].round().astype(np.uint8).tobytes()))[2:-1]
-        hashed = imagehash.hex_to_flathash(binary, 170)
-        paper_hashes_improved_image_hash[int_id] = hashed.hash.astype('int').flatten()
+        # binary = str(binascii.b2a_hex(image_hashes_improved[id].round().astype(np.uint8).tobytes()))[2:-1]
+        # hashed = imagehash.hex_to_flathash(binary, 170)
+        # paper_hashes_improved_image_hash[int_id] = hashed.hash.astype('int').flatten()
+        paper_hashes_improved_image_hash[int_id] = image_hashes_improved[id]
         paper_improved_length = paper_hashes_improved_image_hash[int_id].shape[0]
         
-    paper_improved_annoy = AnnoyIndex(paper_improved_length, "hamming")
+    paper_improved_annoy = AnnoyIndex(paper_improved_length, "euclidean")
     for key, value in paper_hashes_improved_image_hash.items():
         paper_improved_annoy.add_item(key, value)
         
