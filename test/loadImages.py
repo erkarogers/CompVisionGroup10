@@ -1,12 +1,9 @@
 import http
-from io import BytesIO
 import numpy as np
 import pandas as pd
 import glob
 import urllib.request
-import requests
 import cv2
-from PIL import Image
 import sys
 import pickle
 
